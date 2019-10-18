@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css" >
+    <style>
+        .newPadd{
+            padding-right: 0;
+            padding-left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="col-xs-12 newPadd">
+        <nav class="navbar navbar-default navbar-inverse navbar-static-top" style="margin-bottom: 0px;">
+            <div class="container">
+                <div class="navbar-header">
+                  <a class="navbar-brand" href="#" style="color: white">路赞<span>新闻杂志</span></a>
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                  <ul class="nav navbar-nav" id="header-point">
+                      {% if index == 0 %}
+                        <li data-name = '0' class="active"><a href="#" >首页</a></li>
+                      {% else %}
+                        <li data-name = '0'><a href="#" >首页</a></li>
+                      {% endif %}
+                      {% for item in menulist %}
+                          {% if item.id == index %}
+                            <li data-name = '{{ item.id }}' class="active"><a href="#" >{{ item.name }}</a></li>
+{#                    <li data-name = '3'><a href="#" >科技</a></li>#}
+{#                    <li data-name = '4'><a href="#" >综合</a></li>#}
+                          {% else %}
+                            <li data-name = '{{ item.id }}'><a href="#" >{{ item.name }}</a></li>
+                          {% endif %}
+                      {% endfor %}
+                  </ul>
+                </div>
+            </div><!-- /.container-fluid -->
+        </nav>
+    </div>
+</body>
+</html>
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.js"></script>
+<script>
+    {#导航条的点击事件#}
+    $("#header-point li").click(function(){
+        console.log(123)
+        $("#header-point li").removeClass()
+        $(this).addClass("active")
+        var name = $(this).data('name');
+        $.ajax({
+			type:"get",
+			dataType:"json",
+            data:{
+			    index:name,
+            },
+			url:"/index/subpage1/",
+			success:function(data) {
+			    {#console.log(data.index)#}
+                if (name==0) {
+                    $(window).attr('location', '/index/home/');
+                }else {
+                    $(window).attr('location', '/index/subpage/?id='+name+'')
+                }
+                {#$("#header-point li:eq(data.index)").addClass("active")#}
+            }
+        })
+        {#$(window).attr('location','/index/subpage/')#}
+        {#if (name==1){#}
+        {#    $(window).attr('location','/index/subpage/');#}
+        {# }else if (name==2){#}
+        {#    $(window).attr('location','/index/subpage1/');#}
+        {# }#}
+        {#else if (name==3){#}
+        {#    $(window).attr('location','/index/subpage2/');#}
+        {# }#}
+     })
+
+</script>

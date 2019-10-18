@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css" >
+    <style>
+        .left-list{
+            overflow:hidden; /*超出的部分隐藏起来。*/
+            white-space:nowrap;/*不显示的地方用省略号...代替*/
+            text-overflow:ellipsis;/* 支持 IE */
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid" style="margin-bottom: 40px;padding: 0">
+        <div class="row">
+            {% include 'index-common/header.html' %}
+        </div>
+        {% include 'index-common/footer.html' %}
+        <div class="row">
+            <div class="col-xs-8 news"><!-- .weghiet -->
+                {% for item in newslist %}
+                <div class='row' style='border-bottom: 2px solid lightgray'>
+                    <div class='col-sm-3 text-center' style='padding:5px 0;'>
+                        {% if item.thumb != None %}
+                        <img style='max-height:140px;max-weight:140px' class='img-responsive' src='/static/uploads/{{ item.thumb }}'>
+                        {% else %}
+                        <img src='/static/img/a4.jpg'>
+                        {% endif %}
+                    </div>
+                    <div class='col-sm-9 text-left'>
+                        <h4 style='padding:20px 0 0px 0' class="left-list">
+                            <a href='/index/detail/?id={{ item.id }}' style='color:{{ item.titlecolor }}'>{{ item.title }}</a>
+                        </h4>
+                        <div style='height:55px'>{{ item.content|safe|truncatechars:10 }}</div>
+                        <span class='post-date' style='padding-right:20px'>{{ item.registtime|date:"Y-m-d H:i:s"}}</span>
+                        <span class='glyphicon glyphicon-education' style='color: #5bc0de'>{{ item.num }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+                <div class='col-xs-offset-6 pages'>
+                    <ul class='pagination'>
+                        {% if pagelist|length <= 3 %}
+                            {#var pagediv='<li {% if pages == 1 %} class="hidden" {% endif %}><a href="/admin1/newslist/?page={{ item|add:-1 }}&&catid={{ catid }}&&title={{ title }}" aria-label="Previous"> <span aria-hidden="true">&laquo;</span></a> </li{% for item in pagelist %}<li{% if pages == item %}class="active"{% endif %}><a href="/admin1/newslist/?page={{ item }}&&catid={{ catid }}&&title={{ title }}">{{ item }}</a></li>{% endfor %} <li{% if pages == pagelist|length %}class="hidden"{% endif %} > <a href="/admin1/newslist/?page={{ item|add:1 }}&&catid={{ catid }}&&title={{ title }}" aria-label="Next"> <span aria-hidden="true">&raquo;</span> </a> </li>'#}
+                            <li  {% if page == 1 %} class="hidden" {% endif %}>
+                                <a href="/index/subpage/?page={{ page|add:-1 }}&&id={{ index }}" aria-label="Previous"> <span aria-hidden="true">&laquo;</span> </a>
+                            </li>
+                            {% for item in pagelist %}
+                                <li
+                                    {% if page == item %}
+                                        class="active"
+                                    {% endif %}>
+                                    <a href="/index/subpage/?page={{ item }}&&id={{ index }}">{{ item }}</a>
+                                </li>
+                            {% endfor %}
+                            <li {% if page == pagelist|length %} class="hidden"{% endif %}>
+                                <a href="/index/subpage/?page={{ page|add:1 }}&&id={{ index }}" aria-label="Next"> <span aria-hidden="true">&raquo;</span> </a>
+                            </li>
+                        {% else %}
+                            <li  {% if page == 1 %} class="hidden" {% endif %}>
+                                <a href="/index/subpage/?page={{ page|add:-1 }}&&id={{ index }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span> </a>
+                            </li>
+                            {% for item in pagelist %}
+                                {% if item < pagelist|first|add:3 and page < pagelist|first|add:2 %}
+                                    <li
+                                        {% if page == item %}
+                                            class="active"
+                                        {% endif %} >
+                                        <a href="/index/subpage/?page={{ item }}&&id={{ index }}">{{ item }}</a>
+                                    </li>
+                                {% elif page|add:4 > pagelist|last|add:2 and item > pagelist|last|add:-3 and item < pagelist|last|add:1 %}
+                                    <li
+                                        {% if page == item %}
+                                            class="active"
+                                        {% endif %} >
+                                        <a href="/index/subpage/?page={{ item }}&&id={{ index }}">{{ item }}</a>
+                                    </li>
+                                {% elif item < pagelist|last|add:1 and item > pagelist|first|add:-1 and item < page|add:2 and item > page|add:-2 %}
+                                    <li
+                                        {% if page == item %}
+                                            class="active"
+                                        {% endif %} >
+                                        <a href="/index/subpage/?page={{ item }}&&id={{ index }}">{{ item }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            <li {% if page == pagelist|length %} class="hidden"{% endif %}>
+                                <a href="/index/subpage/?page={{ page|add:1 }}&&id={{ index }}" aria-label="Next"> <span aria-hidden="true">&raquo;</span> </a>
+                            </li>
+                        {% endif %}
+{#                    {% if list|length <= 3 %}#}
+{#                        <li  {% if pages == 1 %} class="hidden" {% endif %}>#}
+{#                            <a> <span aria-hidden="true">&laquo;</span> </a> #}
+{#                        </li>#}
+{#                        {% for item in list %}#}
+{#                            <li {% if pages == item %}  class="active"{% endif %}>#}
+{#                                <a href="/admin1/newslist/?page={{ item }}&&catid={{ catid }}&&title={{ title }}">{{ item }}</a>#}
+{#                            </li>#}
+{#                        {% endfor %}#}
+{#                        <li {% if pages == list|length %} class="hidden"{% endif %}>#}
+{#                            <a href="/admin1/newslist/?page={{ pages|add:1 }}&&catid={{ catid }}&&title={{ title }}" aria-label="Next"> <span aria-hidden="true">&raquo;</span> </a> #}
+{#                        </li>#}
+{#                    {% else %}#}
+{#                        <li  {% if pages == 1 %} class="hidden" {% endif %}><a href="/admin1/newslist/?page={{ pages|add:-1 }}&&catid={{ catid }}&&title={{ title }}" aria-label="Previous"> <span aria-hidden="true">&laquo;</span> </a> </li>{% for item in pagelist %}{% if item < pagelist|first|add:3 and pages < pagelist|first|add:2 %}<li {% if pages == item %} class="active" {% endif %} ><a href="/admin1/newslist/?page={{ item }}&&catid={{ catid }}&&title={{ title }}">{{ item }}</a></li> {% elif pages|add:4 > pagelist|last|add:2 and item > pagelist|last|add:-3 and item < pagelist|last|add:1 %} <li {% if pages == item %} class="active" {% endif %} ><a href="/admin1/newslist/?page={{ item }}&&catid={{ catid }}&&title={{ title }}">{{ item }}</a></li> {% elif item < pagelist|last|add:1 and item > pagelist|first|add:-1 and item < pages|add:2 and item > pages|add:-2 %}<li {% if pages == item %} class="active" {% endif %} ><a href="/admin1/newslist/?page={{ item }}&&catid={{ catid }}&&title={{ title }}">{{ item }}</a></li> {% endif %} {% endfor %} <li {% if pages == pagelist|length %} class="hidden"{% endif %}><a href="/admin1/newslist/?page={{ pages|add:1 }}&&catid={{ catid }}&&title={{ title }}" aria-label="Next"> <span aria-hidden="true">&raquo;</span> </a> </li>'#}
+{#                    {% endif %}#}
+{#                        {% for item in list %}#}
+{#                            {% if item == 1 %}#}
+{#                            <li class='active pagelist' onclick='changepage({{ item }})'><a>{{ item }}</a></li>#}
+{#                            {% else %}#}
+{#                            <li class="pagelist" onclick='changepage({{ item }})'><a>{{ item }}</a></li>#}
+{#                            {% endif %}#}
+{#                        {% endfor %}#}
+                    </ul>
+                </div>
+            </div>
+            {% include 'index-common/left.html' %}
+        </div>
+    </div>
+</body>
+</html>
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.js"></script>
+<script>
+    init()
+    var id
+    function init() {
+        {#修改图片2宽度和框一致#}
+        var c=""
+        c=$(".border2-width").width()
+        {#$(".img2-height").css("width",c+"px")#}
+        $(".img2-weight").css("width",c+"px")
+
+
+        {#id=$("#header-point .active").data("name")#}
+        {#console.log(id)#}
+        {#$.ajax({#}
+		{#	type:"get",#}
+		{#	dataType:"json",#}
+        {#    data:{#}
+		{#	    id:id,#}
+        {#        num:0,#}
+        {#    },#}
+		{#	url:"http://127.0.0.1:8000/index/subajax/",#}
+		{#	success:function(data){#}
+		{#		//处理接收过来的数据  作者的名字 赋值给标签#}
+        {#        var content=data["cont"]#}
+        {#        var news=data["news"]#}
+        {#        var list=data["list"]#}
+        {#        console.log(content,news)#}
+        {#        console.log(content.length)#}
+        {#        var newslist=''#}
+        {#        for (var i=0;i<content.length;i++){#}
+        {#            console.log(content[i],news[i])#}
+        {#            var smallcont=content[i]['content']#}
+        {#            console.log(smallcont.split('。')[0])#}
+        {#            var newtime=formatTime(news[i]['registtime'], 'Y年M月D日 h:m:s')#}
+                    {#var div="<div class='row' style='border-bottom: 2px solid lightgray'><div class='col-sm-3 text-center'><img src='/static/img/a4.jpg'></div><div class='col-sm-9 text-left'> <h4 style='padding:20px 0 0px 0,'><a href='/index/detail/?id="+news[i]['id']+"' style='color:"+news[i].titlecolor+"'>"+news[i]['title']+"</a></h4> <p style='height:55px'>"+smallcont.split('。')[0]+"</p> <span class='post-date'>"+newtime+"</span><span class='glyphicon glyphicon-education' style='color: #5bc0de'>"+news[i]['num']+"</span></div></div>"#}
+                    {#newslist+=div#}
+        {#            var div="<div class='row' style='border-bottom: 2px solid lightgray'><div class='col-sm-3 text-center' style='padding:5px 0;'>"#}
+        {#            if(news[i]['thumb']){#}
+        {#                console.log(111111111)#}
+        {#                var div2="<img style='max-height:140px;max-weight:140px' class='img-responsive' src='/static/uploads/"+news[i]['thumb']+"'>"#}
+        {#            }else {#}
+        {#                console.log(22222222222)#}
+        {#                var div2="<img src='/static/img/a4.jpg'>"#}
+        {#            }#}
+        {#            var div3="</div><div class='col-sm-9 text-left'> <h4 style='padding:20px 0 0px 0,'><a href='/index/detail/?id="+news[i]['id']+"' style='color:"+news[i].titlecolor+"'>"+news[i]['title']+"</a></h4> <p style='height:55px'>"+smallcont.split('。')[0]+"</p> <span class='post-date' style='padding-right:20px'>"+newtime+"</span><span class='glyphicon glyphicon-education' style='color: #5bc0de'>"+news[i]['num']+"</span></div></div>"#}
+        {#            var alldiv=div+div2+div3#}
+        {#            newslist+=alldiv#}
+        {#        }#}
+                {#var page="<div class='col-xs-offset-6'><ul class='pagination' id='pagelist'>"#}
+                {#for(var j=0;j<list.length;j++){#}
+                {#    if(list[j]==1){#}
+                {#        var lipage="<li class='active pagelist' onclick='changepage("+list[j]+")'><a>"+list[j]+"</a></li>"#}
+                {#        page+=lipage#}
+                {#    }#}
+                {#    else{#}
+                {#        var lipage = "<li class='pagelist' onclick='changepage("+list[j]+")'><a>" + list[j] + "</a></li>"#}
+                {#        page += lipage#}
+                {#    }#}
+                {# }#}
+                {#var lastpage="</ul></div>"#}
+                {#page+=lastpage#}
+                {#newslist+=page#}
+                {#newslist+=$(".news").html()#}
+                {#$(".news").html(newslist)#}
+			{# }#}
+		{# });#}
+    }
+    {#侦听浏览器窗口变化#}
+    $(window).resize(function() {
+        {#修改图片2宽度和框一致#}
+        var c=""
+        c=$(".border2-width").width()
+        {#$(".img2-height").css("width",c+"px")#}
+        $(".img2-weight").css("width",c+"px")
+    });
+
+    // 格式化日期，如月、日、时、分、秒保证为2位数
+    function formatNumber (n) {
+        n = n.toString()
+        return n[1] ? n : '0' + n;
+    }
+    // 参数number为毫秒时间戳，format为需要转换成的日期格式
+    function formatTime (number, format) {
+        let time = new Date(number)
+        let newArr = []
+        let formatArr = ['Y', 'M', 'D', 'h', 'm', 's']
+        newArr.push(time.getFullYear())
+        newArr.push(formatNumber(time.getMonth() + 1))
+        newArr.push(formatNumber(time.getDate()))
+
+        newArr.push(formatNumber(time.getHours()))
+        newArr.push(formatNumber(time.getMinutes()))
+        newArr.push(formatNumber(time.getSeconds()))
+
+        for (let i in newArr) {
+            format = format.replace(formatArr[i], newArr[i])
+        }
+        return format;
+    }
+
+    {#function changepage(i){#}
+    {#    var arr=document.getElementsByClassName("pagelist")#}
+    {#    for (var j=0;j<arr.length;j++){#}
+    {#        arr[j].classList.remove("active");#}
+    {#    }#}
+    {#    arr[i-1].classList.add("active");#}
+    {#    var num=i-1#}
+    {#    $.ajax({#}
+	{#		type:"get",#}
+	{#		dataType:"json",#}
+    {#        data:{#}
+	{#		    id:id,#}
+    {#            num:num,#}
+    {#        },#}
+	{#		url:"http://127.0.0.1:8000/index/subajax/",#}
+	{#		success:function(data){#}
+	{#			//处理接收过来的数据  作者的名字 赋值给标签#}
+    {#            var content=data["cont"]#}
+    {#            var news=data["news"]#}
+    {#            var list=data["list"]#}
+    {#            console.log(content,news)#}
+    {#            console.log(content.length)#}
+    {#            var newslist=''#}
+                {#newslist=$(".news").html()#}
+    {#            for (var i=0;i<content.length;i++){#}
+    {#                console.log(content[i],news[i])#}
+    {#                var smallcont=content[i]['content']#}
+    {#                console.log(smallcont.split('。')[0])#}
+    {#                var newtime=formatTime(news[i]['registtime'], 'Y年M月D日 h:m:s')#}
+    {#                var div="<div class='row' style='border-bottom: 2px solid lightgray'><div class='col-sm-3 text-center'><img src='/static/img/a4.jpg'></div><div class='col-sm-9 text-left'> <h4 style='padding:20px 0 0px 0,'><a href='/index/detail/?id="+news[i]['id']+"' style='color:"+news[i].titlecolor+"'>"+news[i]['title']+"</a></h4> <p style='height:55px'>"+smallcont.split('。')[0]+"</p> <span class='post-date'>"+newtime+"</span><span class='glyphicon glyphicon-education' style='color: #5bc0de'>"+news[i]['num']+"</span></div></div>"#}
+    {#                newslist+=div#}
+    {#            }#}
+                {#var page="<div class='col-xs-offset-6'><ul class='pagination' id='pagelist'>"#}
+                {#for(var j=0;j<list.length;j++){#}
+                {#    if(list[j]==1){#}
+                {#        var lipage="<li class='active pagelist' onclick='changepage("+list[j]+")'><a>"+list[j]+"</a></li>"#}
+                {#        page+=lipage#}
+                {#    }#}
+                {#    else{#}
+                {#        var lipage = "<li class='pagelist' onclick='changepage("+list[j]+")'><a>" + list[j] + "</a></li>"#}
+                {#        page += lipage#}
+                {#    }#}
+                {# }#}
+                {#var lastpage="</ul></div>"#}
+                {#page+=lastpage#}
+                {#newslist+=page#}
+    {#            var firstpage="<div class='col-xs-offset-6 pages'>"#}
+    {#            var pagecont=$(".pages").html()#}
+    {#            var lastpage="</div>"#}
+    {#            firstpage+=pagecont#}
+    {#            firstpage+=lastpage#}
+    {#            newslist+=firstpage#}
+    {#            $(".news").html(newslist)#}
+	{#		}#}
+	{#	});#}
+    {# }#}
+</script>

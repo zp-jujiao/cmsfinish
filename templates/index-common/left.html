@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css" >
+</head>
+<style>
+    .left-list{
+        overflow:hidden; /*超出的部分隐藏起来。*/
+        white-space:nowrap;/*不显示的地方用省略号...代替*/
+        text-overflow:ellipsis;/* 支持 IE */
+    }
+    a{
+        text-decoration:none;
+        color: black;
+    }
+</style>
+<body>
+    <div class="col-xs-3 text-center">
+        <div class="row">
+            <h2>文章排行</h2>
+            <div style="font-size: 16px;color: #d4d4d4">TOP ARTICLES</div>
+        </div>
+        {% for item in news %}
+        <div class="row" style="border-top: 1px solid black;padding: 15px 0 20px 0;font-weight: bold">
+            {% if item.index == 1 %}
+            <div class="col-sm-2" style="color: white;background-color: red;font-weight: bold;font-size: 22px">{{ item.index }}</div>
+            {% else %}
+            <div class="col-sm-2" style="font-weight: bold;font-size: 22px">{{ item.index }}</div>
+            {% endif %}
+            <div class="col-sm-10 text-left left-list tab-h2" style="font-size: 22px"><a href='/index/detail/?id="+{{ item.id }}+"'>{{ item.title }}</a></div>
+            {% if item.index == 1 %}
+            <div class="col-sm-offset-2 col-sm-10 text-left" style="padding-top: 10px;font-weight: normal">付水电费第三方</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% for item in positionthree %}
+        <div class="text-center border2-width" style="border: 1px solid lightgray;margin: 10px;position: relative;padding: 5px">
+            <img  src="/static/uploads/{{ item.thumb }}" class="img2-height img-responsive" >
+            <a href="/index/detail/?id={{ item.id }}"><div class="img2-weight left-list" style="position: absolute;bottom: 5px;z-index: 10;background-color: rgba(0,0,0,0.5);color: white;padding: 10px 0" >{{ item.title }}</div></a>
+        </div>
+{#        <div class="text-center border2-width" style="border: 1px solid lightgray;margin: 10px;position: relative;padding: 5px">#}
+{#            <img  src="/static/img/c4.jpg" class="img2-height img-responsive" >#}
+{#            <div class="img2-weight" style="position: absolute;bottom: 5px;z-index: 10;background-color: rgba(0,0,0,0.5);color: white;padding: 10px 0">Firefox浏览器</div>#}
+{#        </div>#}
+{#        <div class="text-center border2-width" style="border: 1px solid lightgray;margin: 10px;position: relative;padding: 5px">#}
+{#            <img  src="/static/img/c13.jpg" class="img2-height img-responsive">#}
+{#            <div class="img2-weight" style="position: absolute;bottom: 5px;z-index: 10;background-color: rgba(0,0,0,0.5);color: white;padding: 10px 0">Safari浏览器</div>#}
+{#        </div>#}
+        {% endfor %}
+    </div>
+    <div class="col-xs-1"></div>
+</body>
+</html>
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.js"></script>
+<script>
+    init()
+    function init() {
+        {#修改图片2宽度和框一致#}
+        var c=""
+        c=$(".border2-width").width()
+        {#$(".img2-height").css("width",c+"px")#}
+        $(".img2-weight").css("width",c+"px")
+    }
+
+
+        $(window).resize(function() {
+        {#修改图片2宽度和框一致#}
+        var c=""
+        c=$(".border2-width").width()
+        {#$(".img2-height").css("width",c+"px")#}
+        $(".img2-weight").css("width",c+"px")
+    });
+</script>

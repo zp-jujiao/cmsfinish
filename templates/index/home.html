@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css" >
+</head>
+<style>
+    .newPadd{
+            padding-right: 0;
+            padding-left: 0;
+        }
+    .back{
+        background-color: black;
+    }
+    .left-list{
+        overflow:hidden; /*超出的部分隐藏起来。*/
+        white-space:nowrap;/*不显示的地方用省略号...代替*/
+        text-overflow:ellipsis;/* 支持 IE */
+    }
+    .carousel-caption{
+        bottom: 0;
+    }
+    .tab-h2 {
+        font-size:20px;
+    }
+
+    .tab-p {
+        font-size: 15px;
+    }
+    @media (min-width: 768px) {
+        .tab-h2 {
+            font-size: 22px;
+        }
+        .tab-p {
+            font-size: 16px;
+        }
+    }
+    @media (min-width: 992px) {
+        .tab-h2 {
+            font-size:26px;
+        }
+        .tab-p {
+            font-size: 17px;
+        }
+    }
+    {#.container-fluid{#}
+    {#    padding-left: 0px;#}
+    {#    padding-right: 0px;#}
+    {# }#}
+</style>
+<body>
+    <div class="container-fluid" style="margin-bottom: 40px;padding: 0px">
+        <div class="row">
+            {% include 'index-common/header.html' %}
+        </div>
+        {% include 'index-common/footer.html' %}
+        <div class="row">
+            <div class="col-xs-8 newPadd">
+                <div class="row">
+                    <div class="col-xs-9">
+                        <div id="myCarousel" class="carousel slide">
+                            <!-- 轮播（Carousel）指标 -->
+        {#                    <ol class="carousel-indicators">#}
+        {#                        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>#}
+        {#                        <li data-target="#myCarousel" data-slide-to="1"></li>#}
+        {#                        <li data-target="#myCarousel" data-slide-to="2"></li>#}
+        {#                    </ol>#}
+                            <!-- 轮播（Carousel）项目 -->
+                            <div class="carousel-inner" role="listbox" data-ride="carousel">
+                                {% for item in positionone %}
+                                    {% if forloop.counter0	 == 0 %}
+                                        <div class="item active">
+                                            <img src="/static/uploads/{{ item.thumb }}" alt="First slide" class="center-block" style="width: 100%;max-height: 330px">
+                                            <a href="/index/detail/?id={{ item.id }}"><div class="carousel-caption left-list" style="background-color: rgba(0,0,0,0.5);color:white;text-decoration: none">{{ item.title }}</div></a>
+                                        </div>
+                                    {% else %}
+                                        <div class="item">
+                                            <img src="/static/uploads/{{ item.thumb }}" alt="Second slide" class="center-block" style="width: 100%;max-height: 330px">
+                                            <a href="/index/detail/?id={{ item.id }}"><div class="carousel-caption left-list" style="background-color: rgba(0,0,0,0.5);width: 100%;color:white;text-decoration: none">{{ item.title }}</div></a>
+                                        </div>
+                                    {% endif %}
+
+{#                                    <div class="item">#}
+{#                                        <img src="/static/img/c13.jpg" alt="Third slide"  class="center-block" style="width: 100%;">#}
+{#                                        <div class="carousel-caption left-list" style="background-color: rgba(0,0,0,0.5);width: 100%">Safari浏览器</div>#}
+{#                                    </div>#}
+                                {% endfor %}
+                            </div>
+                            <!-- 轮播（Carousel）导航 -->
+                            <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev" >
+                                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+                                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-xs-3">
+                        {% for item1 in positiontwo %}
+                        <div class="text-center border-width" style="border: 1px solid lightgray;margin: 10px;position: relative;padding: 5px">
+                            <img  src="/static/uploads/{{ item1.thumb }}" class="img-height" >
+                            <a href="/index/detail/?id={{ item1.id }}"><div class="img-weight left-list" style="position: absolute;bottom: 5px;z-index: 10;background-color: rgba(0,0,0,0.5);color: white" >{{ item1.title }}</div></a>
+                        </div>
+{#                        <div class="text-center border-width" style="border: 1px solid lightgray;margin: 10px;position: relative;padding: 5px">#}
+{#                            <img  src="/static/img/c4.jpg" class="img-height" >#}
+{#                            <div class="img-weight" style="position: absolute;bottom: 5px;z-index: 10;background-color: rgba(0,0,0,0.5);color: white">Firefox浏览器</div>#}
+{#                        </div>#}
+{#                        <div class="text-center border-width" style="border: 1px solid lightgray;margin: 10px;position: relative;padding: 5px">#}
+{#                            <img  src="/static/img/c13.jpg" class="img-height" >#}
+{#                            <div class="img-weight" style="position: absolute;bottom: 5px;z-index: 10;background-color: rgba(0,0,0,0.5);color: white;">Safari浏览器</div>#}
+{#                        </div>#}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 newslist"><!-- .weghiet -->
+
+                    </div>
+                </div>
+            </div>
+            {% include 'index-common/left.html' %}
+        </div>
+    </div>
+</body>
+</html>
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.js"></script>
+<script>
+    init()
+    function init() {
+        var id=0
+        $.ajax({
+			type:"get",
+			dataType:"json",
+            data:{
+			    id:id
+            },
+			url:"http://127.0.0.1:8000/index/homeajax/",
+			success:function(data){
+				console.log(data,"111111111")
+                var content=data["cont"]
+                var news=data["news"]
+                console.log(content,news)
+                console.log(content.length)
+                var newslist=''
+                newslist=$(".newslist").html()
+                for (var i=0;i<content.length;i++){
+                    console.log(content[i],news[i])
+                    var smallcont=content[i]['content']
+                    console.log(smallcont.split('。')[0])
+                    var newtime=formatTime(news[i]['registtime'], 'Y年M月D日 h:m:s')
+                    var div="<div class='row' style='border-bottom: 2px solid lightgray'><div class='col-sm-3 text-center' style='padding:5px 0;'>"
+                    if(news[i]['thumb']){
+                        console.log(111111111)
+                        var div2="<img style='max-height:140px;max-weight:140px' class='img-responsive' src='/static/uploads/"+news[i]['thumb']+"'>"
+                    }else {
+                        console.log(22222222222)
+                        var div2="<img src='/static/img/a4.jpg'>"
+                    }
+                    var div3="</div><div style='margin:20px 0 0px 0' class='col-sm-9 text-left'> <h4 ><a href='/index/detail/?id="+news[i]['id']+"' style='color:"+news[i].titlecolor+"'>"+news[i]['title']+"</a></h4> <div style='height:55px'>"+smallcont.split('。')[0]+"</div> <span class='post-date' style='padding-right:20px'>"+newtime+"</span><span class='glyphicon glyphicon-education' style='color: #5bc0de'>"+news[i]['num']+"</span></div></div>"
+                    var alldiv=div+div2+div3
+                    newslist+=alldiv
+                }
+                $(".newslist").html(newslist)
+			}
+		});
+
+
+
+        var a=''
+        a=$(".carousel-inner").height()
+        {#console.log(a)#}
+        var a1=''
+        a1=a/3-20
+        var a2
+        a2=a1/4
+        console.log(a1)
+        $(".img-height").css("height",a1+"px")
+        $(".img-weight").css("height",a2+"px")
+        $(".img-weight").css("line-height",a2+"px")
+
+        var b=""
+        b=$(".border-width").width()
+        $(".img-height").css("width",b+"px")
+        $(".img-weight").css("width",b+"px")
+
+
+        {#修改图片2宽度和框一致#}
+        var c=""
+        c=$(".border2-width").width()
+        {#$(".img2-height").css("width",c+"px")#}
+        $(".img2-weight").css("width",c+"px")
+    }
+
+    {#侦听浏览器窗口变化#}
+    $(window).resize(function() {
+        {#调整图片高度#}
+        var a=''
+        a=$(".carousel-inner").height()
+        {#console.log(a)#}
+        var a1=''
+        a1=a/3-20
+        var a2
+        a2=a1/4
+        console.log(a1)
+        $(".img-height").css("height",a1+"px")
+        $(".img-weight").css("height",a2+"px")
+        $(".img-weight").css("line-height",a2+"px")
+
+        {#修改图片宽度和框一致#}
+        var b=""
+        b=$(".border-width").width()
+        $(".img-height").css("width",b+"px")
+        $(".img-weight").css("width",b+"px")
+
+        {#修改图片2宽度和框一致#}
+        var c=""
+        c=$(".border2-width").width()
+        {#$(".img2-height").css("width",c+"px")#}
+        $(".img2-weight").css("width",c+"px")
+    });
+
+
+    // 格式化日期，如月、日、时、分、秒保证为2位数
+    function formatNumber (n) {
+        n = n.toString()
+        return n[1] ? n : '0' + n;
+    }
+    // 参数number为毫秒时间戳，format为需要转换成的日期格式
+    function formatTime (number, format) {
+        let time = new Date(number)
+        let newArr = []
+        let formatArr = ['Y', 'M', 'D', 'h', 'm', 's']
+        newArr.push(time.getFullYear())
+        newArr.push(formatNumber(time.getMonth() + 1))
+        newArr.push(formatNumber(time.getDate()))
+
+        newArr.push(formatNumber(time.getHours()))
+        newArr.push(formatNumber(time.getMinutes()))
+        newArr.push(formatNumber(time.getSeconds()))
+
+        for (let i in newArr) {
+            format = format.replace(formatArr[i], newArr[i])
+        }
+        return format;
+    }
+</script>

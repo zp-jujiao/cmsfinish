@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文章管理</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css" >
+</head>
+<body>
+     {% include 'admin_common/header.html' %}
+    <div class="row">
+        {% include 'admin_common/left.html' %}
+        <div class="col-sm-10 main" style="margin-top: 10px;">
+            <ol class="breadcrumb">
+                <span class="glyphicon glyphicon-tags" style="padding-right: 5px;"></span>
+                <li><a href="/admin/newsList">文章管理</a></li>
+                <li class="active">文章列表</li>
+            </ol>
+            <div class="row">
+                <div class="col-sm-2 btn-group open">
+                    <button type="button" class="btn btn-primary"><a href="/admin/addNews" style="color: white">+添加文章</a></button>
+                </div>
+                <div class="col-sm-4">
+			        <div class="input-group">
+			            <span class="input-group-addon" id="basic-addon1">类型</span>
+			            <select class="form-control" name="catid" id="catid">
+			      			 <option
+                                  {% if catid == -1%}
+                                    selected
+                                  {% endif %}
+                                    value="-1">全部菜单</option>
+                                  {% for item in listinfo %}
+                                      <option
+                                           {% if catid == item.id %}
+                                             selected
+                                           {% endif %}
+                                             value="{{ item.id }}">{{ item.name }}</option>
+                                  {% endfor %}
+			      		</select>
+			        </div>
+                </div>
+                <div class="col-sm-4">
+			        <div class="input-group">
+			          	<input type="text" class="form-control" placeholder="文章标题" name="search" value="{{ searchTitle }}">
+			          	<span class="input-group-btn">
+			            	<button class="btn btn-primary" type="button" id="search"><span class="glyphicon glyphicon-search"></span></button>
+			          	</span>
+                    </div>
+	    		</div>
+            </div>
+            <div class="row">
+                <form action="/admin/addPosContent/" method="post" class="col-sm-11 form-horizontal">
+                    {% csrf_token %}
+                    <table class="table table-hover table-bordered" style="text-align: center;">
+				        <thead>
+					       <tr>
+                                <th style="text-align: center;"><input type="checkbox" value="" name="news"></th>
+                           <th style="text-align: center;">id</th>
+                           <th style="text-align: center;">标题</th>
+					       <th style="text-align: center;">栏目</th>
+					       <th style="text-align: center;">封面图</th>
+                                <th style="text-align: center;">更新时间</th>
+					       <th style="text-align: center;">点击量</th>
+					       <th style="text-align: center;">操作</th>
+					     </tr>
+					   </thead>
+					   <tbody>
+                            {% for item in newsList %}
+                                <tr id="{{ item.id }}"><td><input type="checkbox" value="{{ item.id }}" name="news" id="news"></td>
+                                <td >{{ item.id }}</td>
+                                <td>{{ item.title }}</td>
+                                <td>
+                                {% for i in listinfo %}
+                                   {% if i.id == item.catid %}
+                                        {{ i.name }}
+                                    {% endif %}
+                                {% endfor %}
+                                </td>
+                                <td>
+                                {% if item.thumb == None %}
+                                    <img style="width: 50px;height: 50px;" src="/static/img/upload.png">
+                                {% else %}
+                                   <img  style="width: 50px;height: 50px;" src="/static/uploads/{{ item.thumb }}"/>
+                                {% endif %}
+                                </td>
+                                <td>{{ item.registtime|date:'Y-m-d h:m:s' }}</td>
+                                <td>{{ item.num }}</td>
+                                <td>
+                                    <a href="/admin/editNews?id={{ item.id }}" class="btn btn-primary" ><span class="glyphicon glyphicon-edit"></span></a>
+                                    <a class="btn btn-danger" id="_del"><span class="glyphicon glyphicon-trash"></span></a>
+                                </td></tr>
+                                {% empty %}
+                                <td colspan="8">当前没有数据</td>
+                            {% endfor %}
+					  	</tbody>
+					</table>
+					<div class="row" style="margin-left: 2px;">
+				    	<div class="col-sm-4 input-group">
+				      		<select class="form-control" name="positionid" id="positionid">
+				      			<option disabled selected name="position">请选择推送位<span class="glyphicon glyphicon-arrow-up"></span></option>
+				      			{% for item in positionName %}
+                                    <option value="{{ item.id }}">{{ item.name }}</option>
+                                {% endfor %}
+				      		</select>
+				      		<span class="input-group-btn">
+				            	<button class="btn btn-primary" type="submit" id="push"><span class="glyphicon glyphicon-arrow-up"></span>推送</button>
+				          	</span>
+		    			</div>
+				    </div>
+                </form>
+            </div>
+            <div class="row">
+                <nav aria-label="Page navigation" style="text-align: center">
+                    <ul class="pagination">
+                        {% if page != 1 %}
+                        <li>
+                            <a href="/admin/newsList?page={{ page |add:-1 }}&catid={{ catid }}&searchTitle={{ searchTitle }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% for item in allPageList %}
+                            <li
+                                {% if page == item %}
+                                 class="active"
+                                {% endif %}
+                            ><a href="/admin/newsList?page={{ item }}&catid={{ catid }}&searchTitle={{ searchTitle }}">{{ item }}</a></li>
+                        {% endfor %}
+                        {% if page != allPage %}
+                            <li>
+                                <a href="/admin/newsList?page={{ page |add:1 }}&catid={{ catid }}&searchTitle={{ searchTitle }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="mymodal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">提示信息：</h4>
+                </div>
+                <div class="modal-body">
+                    <p id="mgs"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="cancel" class="btn btn-danger" data-dismiss="modal">取消</button>
+                    <button type="button" id="confirm" class="btn btn-primary">确定</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+{#    表单提交模态框#}
+    <div class="modal" id="mymodalForm" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title" id="mgs">提示信息：</h4>
+                </div>
+                <div class="modal-body">
+                    <p id="mgs1"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="jump" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+</body>
+</html>
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.js"></script>
+<script src="/static/js/jquery.form.js"></script>
+<script src="/static/js/jquery.validate-1.13.1.js"></script>
+
+<script>
+    init();
+    function init() {
+        //富文本编辑器赋值
+        $("#id_content").val('{{ content|safe }}');
+        //下拉菜单查询
+        {#$("#catid").change(getCatid);#}
+        //文章标题关键字搜索
+        $("#search").click(search);
+        //点击删除
+        $("tbody #_del").click(delClick);
+        validate()
+    }
+    function validate() {
+        $("form").validate({
+            rules: {
+                position: {
+                    required: true,
+                }
+            },
+            messages: {
+                position: {
+                    required: "请选择推荐位",
+                }
+            },
+            submitHandler: function (form) {
+                $("form").ajaxSubmit(function (message) {
+                    var data = JSON.parse(message);
+                    if (data["code"] == 0) {
+                        alert(1234);
+                        open(data["mgs"]);
+                         $("#jump").click(function () {
+                             location.href="/admin/poscontent"
+                         })
+                    }else{
+                        open(data["mgs"]);
+                    }
+                })
+            }
+        })
+    }
+       //表单模态框
+    function open(mgs) {
+        $("#mgs1").html(mgs);
+        $('#mymodalForm').modal("show");
+    }
+
+
+    //下拉菜单查询
+    {#function getCatid(){#}
+    {#    catid = $("option:selected",this).val();//需求主键#}
+    {#    console.log(catid,"我是catid");#}
+    {#    location.href="/admin/newsList?catid="+catid;#}
+
+    //搜索
+    function search(){
+            searchTitle= $("[name='search']").val();
+             catid = $("[name='catid']").val();
+            console.log("菜单",catid,"关键字",searchTitle);
+            location.href="/admin/newsList?catid="+catid+"&searchTitle="+searchTitle
+    }
+        //点击删除
+        function delClick(){
+            var newsid = $(this).parents('tr').children('td').eq(1).text();
+            $("#mgs").html("确认删除该条数据吗？");
+            $('#mymodal').modal('show');
+            $("#cancel").click(function () {
+                location.href="/admin/newsList"
+            });
+            $("#confirm").click(function () {
+                $.ajax({
+                    url:"/admin/delnews/",
+                    type:"get",
+                    data:{
+                        newsid:newsid
+                    },
+                    dataType:"json",
+                    success:function (data) {
+                        $('#'+newsid).remove();
+                    }
+                });
+                $('#mymodal').modal('hide');
+            });
+        }
+
+</script>

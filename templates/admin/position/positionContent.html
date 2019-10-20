@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>推送位内容管理</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css" >
+    <style>
+        .table th{
+				text-align: center;
+			}
+    </style>
+</head>
+<body>
+   {% include 'admin_common/header.html' %}
+    <div class="row">
+        {% include 'admin_common/left.html' %}
+        <div class="col-sm-10 main" style="margin-top: 10px;">
+            <ol class="breadcrumb">
+                <span class="glyphicon glyphicon-tags" style="padding-right: 5px;"></span>
+                <li><a href="/admin/poscontent">推送位内容管理</a></li>
+                <li class="active">推送位列表</li>
+            </ol>
+	    	<div class="col-sm-3 btn-group open">
+		      	<button type="button" class="btn btn-primary"><a href="/admin/positionList" style="color: white">+添加推送位内容</a></button>
+		    </div>
+		    <div class="col-sm-6 input-group">
+		        <span class="input-group-addon" id="basic-addon1">类型</span>
+                <select class="form-control" name="posid" id="posid">
+                    <option
+                           {% if posid == -1%}
+                               selected
+                           {% endif %}
+                            value="-1">全部推送位</option>
+                    {% for item in positioninfo %}
+                        <option
+                             {% if posid == item.id %}
+                                selected
+                             {% endif %}
+                                value="{{ item.id }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+		    </div>
+            <div class="col-sm-11">
+                <table class="table table-hover table-bordered" style="text-align: center;">
+				      <thead>
+					    <tr>
+					      <th>id</th>
+					      <th>推送位名称</th>
+					      <th>文章标题</th>
+                               <th>文章缩略图</th>
+					      <th>操作</th>
+					    </tr>
+					  </thead>
+					  <tbody> 
+                            {% for i in infoList %} 
+                               <tr id={{ i.id }}>
+                                    <td>{{ i.id }}</td>
+                                    <td id="td2">{{ i.posName }}</td>
+                                    <td id="td3">{{ i.title }}</td>
+                                     <td>
+                                        {% if i.thumb == None %}
+                                            <img style="width: 50px;height: 50px;" src="/static/img/upload.png">
+                                        {% else %}
+                                            <img  style="width: 50px;height: 50px;" src="/static/uploads/{{ i.thumb }}">
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="/admin/editposContent?id={{ i.id }}" class="btn btn-primary" id="redact"><span class="glyphicon glyphicon-edit"></span></a>
+                                        <button class="btn btn-danger" id="_del"><span class="glyphicon glyphicon-trash"></span></button>
+                                    </td>
+                               </tr>
+                            {% endfor %} 
+					</tbody>
+                </table>
+                <nav aria-label="Page navigation" style="text-align: center">
+                    <ul class="pagination">
+                        {% if page != 1 %}
+                        <li>
+                            <a href="/admin/poscontent?page={{ page |add:-1 }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% for item in allPageList %}
+                            <li
+                                {% if page == item %}
+                                 class="active"
+                                {% endif %}
+                            ><a href="/admin/poscontent?page={{ item }}&posid={{ posid }}">{{ item }}</a></li>
+                        {% endfor %}
+                        {% if page != allPage %}
+                            <li>
+                                <a href="/admin/poscontent?page={{ page |add:1 }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="mymodal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">提示信息：</h4>
+                </div>
+                <div class="modal-body">
+                    <p id="mgs"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="cancel" class="btn btn-danger" data-dismiss="modal">取消</button>
+                    <button type="button" id="confirm" class="btn btn-primary">确定</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+</body>
+</html>
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.js"></script>
+<script>
+    init();
+    function init() {
+        //点击删除按钮
+        $("tbody #_del").click(delClick);
+        $("#posid").change(optionVal);
+
+
+        {#//点击编辑#}
+        {#$("tbody #redact").on("click", function () {#}
+        {#    alert("点击删除")#}
+        {#    var posid = $(this).parents('tr').children('td').eq(0).text();#}
+        {#    var posName = $(this).parents('tr').children('td').eq(1).text();#}
+        {#    var title = $(this).parents('tr').children('td').eq(2).text();#}
+        {#    var thumb = $(this).parents('tr').children('td').eq(3).text();#}
+        {#    location.href = encodeURI("/manager/posUpdate?id=" + posid + "&posName=" + encodeURIComponent(posName) + "&title=" + encodeURIComponent(title) + "&thumb=" + encodeURIComponent(thumb))#}
+
+
+        //删除方法
+        function delClick() {
+            var posid = $(this).parents('tr').children('td').eq(0).text();
+            alert(posid);
+            $("#mgs").html("确认删除该条数据吗？");
+            $('#mymodal').modal('show');
+            $("#cancel").click(function () {
+                location.href = "/admin/poscontent"
+            });
+            $("#confirm").click(function () {
+                $.ajax({
+                    url: "/admin/delPoscontent/",
+                    type: "get",
+                    data: {
+                        posid: posid
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        $('#' + posid).remove();
+                    }
+                });
+                $('#mymodal').modal('hide');
+            });
+        }
+        //点击下拉菜单弹出所选内容
+        function optionVal() {
+            posid = $("option:selected", this).val();
+            location.href = "/admin/poscontent?id=" + posid
+        }
+    }
+</script>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录入口</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css" >
+    <style>
+        body{
+            background-image:url("../../static/img/m1.jpg");
+            background-size: 100%;
+            margin-top: 100px;
+        }
+        .form-horizontal{
+			background-color: #afd2ff66;
+			border: 0px solid rgba(0, 0, 0, .2);
+			border-radius: 31px;
+			box-shadow: 0px 0px 40px 21px rgba(131, 151, 201, 0.5);
+			-webkit-box-shadow: 0px 0px 40px 21px rgba(131, 151, 201, 0.5);
+			box-shadow: 0px 0px 40px 21px rgba(131, 151, 201, 0.5);
+        }
+    </style>
+</head>
+<body>
+      <div class="container">
+        <div class="row">
+            <div class="form-horizontal col-md-4 col-md-offset-4" id="login_form">
+                <form action="/admin/loginHandler/" method="post">
+                    {% csrf_token %}
+                    <h3 class="form-title col-md-4 col-md-offset-4">LOGIN</h3>
+                    <div class="col-md-8 col-md-offset-2">
+                        <div class="form-group">
+                            <i class="fa fa-user fa-lg"></i>
+                            <input class="form-control" type="text" placeholder="Username" id="username" name="username" autofocus="autofocus"/>
+                        </div>
+                        <div class="form-group">
+                            <i class="fa fa-lock fa-lg"></i>
+                            <input class="form-control" type="password" placeholder="Password" id="password" name="password"/>
+                        </div>
+                        <div class="form-group">
+                            <i class="fa fa-user fa-lg"></i>
+                            <input class="form-control" type="email" placeholder="Email(选填)" id="email" name="email"/>
+                        </div>
+                        <div class="form-group row">
+                            <button type="submit" class="btn btn-success col-md-4 col-md-offset-4" name="submit" id="openModel">登录</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="mymodal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title" id="mgs">提示信息：</h4>
+                </div>
+                <div class="modal-body">
+                    <p id="mgs1"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="jump" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+</body>
+</html>
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.js"></script>
+<script src="/static/js/jquery.form.js"></script>
+<script src="/static/js/jquery.validate-1.13.1.js"></script>
+<script>
+    init();
+
+    function init(){
+        //点击弹出模态框
+        $("#openModel").click(open);
+        validate()
+    }
+    function  validate() {
+        $("form").validate({
+            rules: {
+                username: {
+                    required: true,
+                },
+                password: {
+                    required: true,
+                },
+                email:{
+                    email:true,
+                }
+            },
+            messages:{
+                username:{
+                    required:"请填写此处",
+                },
+                password:{
+                    required:"请填写此处",
+                }
+            },
+            submitHandler:function (form){
+                {##表单提交之前的处理#}
+                $("form").ajaxSubmit(function (message){
+                    var data=JSON.parse(message);
+                    if (data["code"] == 0){
+                        //登陆成功是调用模态框
+                        open(data["mgs"]);
+                         $("#jump").click(function () {
+                             location.href="/admin/homePage/"
+                         })
+                    }else{
+                        open(data["mgs"])
+                    }
+                })
+            }
+        })
+    }
+    function open(mgs) {
+        $("#mgs1").html(mgs);
+        $('#mymodal').modal("show");
+    }
+    //侦听模态框状态
+
+
+</script>

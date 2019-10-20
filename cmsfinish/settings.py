@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'DjangoUeditor',
     'admin1',
-    # 'index',
+    'index',
 ]
 
 MIDDLEWARE = [
@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'admin1.Mymiddleware.Mymiddleware'
+    # 'admin1.Mymiddleware.Mymiddleware'
 ]
 
 ROOT_URLCONF = 'cmsfinish.urls'
@@ -139,21 +139,45 @@ DATABASES = {
     }
 }
 
-
+# 标题颜色
 COLOR_LIST=[
     {
-        "colortxt":"红色",
-        "color":"#FF0000",
+    "color":"#00ffff",
+    "colortxt":"红色"
     },
     {
-        "colortxt":"绿色",
-        "color":"#6ce26c",
+       "color":"#ff00ff",
+        "colortxt":"绿色"
     },
     {
-        "colortxt":"黑色",
-        "color":"#000000",
+        "color":"#00FFFF",
+        "colortxt":"青色"
     },
+    {
+       "color":"#0000FF",
+        "colortxt":"蓝色"
+    },
+    {
+        "color":"#800080",
+        "colortxt":"紫色"
+    },
+{
+       "color":"#A52A2A",
+        "colortxt":"棕色"
+    },
+    {
+        "color":"#808080",
+        "colortxt":"灰色"
+    }
 ]
+
+# 上传图片大小类型限定
+
+UPLOADS={
+    "unit":"kb",
+    "maxsize":100,
+    "types":["jpg", "jpeg", "png","gif"]
+}
 
 IMGTYPE=["jpg", "jpeg", "png"]
 

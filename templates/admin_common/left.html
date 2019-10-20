@@ -1,0 +1,87 @@
+    <title>左侧边栏</title>
+
+    <style type="text/css">
+        *{margin: 0;padding: 0;border: 0;}
+        a{text-decoration: none;}
+        body {
+            font-family: "微软雅黑";
+        }
+        .nav a{
+            color: white;
+        }
+        .heightDiff .active{
+            background:blue;
+        }
+    </style>
+</head>
+<body>
+    <div class="col-sm-2 hidden-xs">
+        <ul class="nav nav-pills nav-stacked heightDiff"  style="background-color:#3b4249;padding-right: 0;">
+            <li role="presentation">
+                <a href="/admin/homePage/"  class="active">
+                    <span class="glyphicon glyphicon-home"></span>
+                    首页
+                </a>
+            </li>
+            <li role="presentation">
+                <a href="/admin/menuList/">
+                    <span class="glyphicon glyphicon-list"></span>
+                    菜单管理
+                </a>
+            </li>
+            <li role="presentation">
+                <a href="/admin/newsList/">
+                    <span class="glyphicon glyphicon-cog"></span>
+                    文章管理
+                </a>
+            </li>
+            <li role="presentation">
+                <a href="/admin/userManage/">
+                    <span class="glyphicon glyphicon-menu-hamburger"></span>
+                    用户管理
+                </a>
+            </li>
+            <li role="presentation">
+                <a href="/admin/positionList/">
+                    <span class="glyphicon glyphicon-bookmark"></span>
+                    推荐位管理
+                </a>
+            </li>
+            <li role="presentation">
+                <a href="/admin/poscontent/">
+                    <span class="glyphicon glyphicon-asterisk"></span>
+                    推荐位内容管理
+                </a>
+            </li>
+            <li role="presentation">
+                <a href="/admin/clearFile/">
+                    <span class="glyphicon glyphicon-trash"></span>
+                    清理资源
+                </a>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.js"></script>
+<script>
+    init();
+    function init(){
+        {#var documentHeigth=$(document).height();#}
+        var windowHeigth=$(window).height();
+        var inverseHeight=$(".navbar-inverse").height();
+        heigthDiff=windowHeigth-inverseHeight;
+        $(".heightDiff").css("height",heigthDiff);
+        var _url=location.pathname;
+        //点击事件添加样式有问题
+        $(".heightDiff a").removeClass("active");
+         $(".heightDiff a").each(function () {
+             gethref=$(this).attr("href");
+             if(gethref==_url){
+                 $(this).addClass("active")
+             }
+         });
+
+    }
+</script>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css" >
+    <style type="text/css">
+        .main p{
+            font-size: 25px;
+            margin-top: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid gainsboro;
+			}
+        .main h5{
+            background-color: gainsboro;
+            height: 30px;
+            line-height: 30px;
+            border: 1px solid gainsboro;
+            border-radius: 2%;
+            padding-left: 10px;
+        }
+        .panel-title{
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+    {% include 'admin_common/header.html' %}
+    <div class="row">
+        {% include 'admin_common/left.html' %}
+        <div class="col-sm-10 main">
+            <p>欢迎使用<span style="color: gray;font-size: 16px;">路赞后台管理系统</span></p>
+            <h5 style="margin-bottom: 35px;">
+                <span class="glyphicon glyphicon-tags"></span>
+                <a href="">平台整理指标</a>
+            </h5>
+            <div class="col-sm-5">
+                <div class="panel panel-primary">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <div class="col-sm-2" style="font-size: 40px;"><span class="glyphicon glyphicon-cloud"></span></div>
+                        <div class="col-sm-5 col-sm-offset-5" style="text-align: center;">
+                            <span style="font-size: 15px;">今日登陆用户数</span>
+                            <dt style="font-weight: bold;margin-top: 10px;">{{ userSum }}</dt>
+                        </div>
+                    </h3>
+                  </div>
+                    <div class="panel-body">
+                        <div class="col-sm-3">查看</div>
+                            <div class="col-sm-3 col-sm-offset-6">
+                                <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                            </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <div class="col-sm-2" style="font-size: 40px;"><span class="glyphicon glyphicon-th-list"></span></div>
+                            <div class="col-sm-5 col-sm-offset-5" style="text-align: center;">
+                                <span style="font-size: 15px;">文章数量</span>
+                                <dt style="font-weight: bold;margin-top: 10px;">{{ newsSum }}</dt>
+                            </div>
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-sm-3">查看</div>
+                        <div class="col-sm-3 col-sm-offset-6">
+                            <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <div class="col-sm-2" style="font-size: 40px;"><span class="glyphicon glyphicon-stats"></span></div>
+                            <div class="col-sm-5 col-sm-offset-5" style="text-align: center;">
+                                <span style="font-size: 15px;">文章最大阅读数</span>
+                                <dt style="font-weight: bold;margin-top: 10px;">{{ maxNum }}</dt>
+                            </div>
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-sm-3">查看</div>
+                        <div class="col-sm-3 col-sm-offset-6">
+                            <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="panel panel-danger">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                        <div class="col-sm-2" style="font-size: 40px;"><span class="glyphicon glyphicon-filter"></span></div>
+                        <div class="col-sm-5 col-sm-offset-5" style="text-align: center;">
+                            <span style="font-size: 15px;">推荐位数</span>
+                            <dt style="font-weight: bold;margin-top: 10px;">{{ positionSum }}</dt>
+                        </div>
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-sm-3">查看</div>
+                        <div class="col-sm-3 col-sm-offset-6">
+                            <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

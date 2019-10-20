@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>编辑推荐位</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css" >
+    <style>
+         {# 缩略图容器#}
+        #newsImg{
+            width: 96px;
+            height: 93px;
+            position: absolute;
+            opacity:0;
+        }
+        {# 缩略图#}
+        #headImgPre{
+             width: 96px;
+             height: 93px;
+             border: 1px solid lightgray;
+        }
+    </style>
+</head>
+<body>
+   {% include 'admin_common/header.html' %}
+    <div class="row">
+        {% include 'admin_common/left.html' %}
+        <div class="col-sm-10 main" style="margin-top: 10px;">
+            <ol class="breadcrumb">
+                <span class="glyphicon glyphicon-tags" style="padding-right: 5px;"></span>
+                <li><a href="/admin/positionList">推荐位管理</a></li>
+                <li class="active">编辑推荐位</li>
+            </ol>
+            <div class="col-sm-7 col-sm-offset-1" style="margin-top: 20px;">
+                <form action="/admin/editposContentHandler/" method="post" class="form-horizontal" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">推荐位名称</label>
+                        <div class="col-sm-10">
+                             <select class="form-control" name="posid" id="posid">
+                                  <option value="-1">全部推送位</option>
+                                     {% for item in positionList %}
+                                  <option
+                                     {% if positionInfo.id == item.id %}
+                                        selected
+                                     {% endif %}
+                                        value="{{ item.id }}">{{ item.name }}</option>
+                                     {% endfor %}
+                             </select>
+                             <input type="hidden" name="posContentId" value="{{ id }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-2 control-label">文章标题</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="title" id="title" value="{{ newsInfo.title }}"  placeholder="请输入文章标题">
+                        </div>
+                    </div>
+                   <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">缩略图</label>
+                        <div class="col-sm-10">
+                            <input type="file" name="newsImg" id="newsImg">
+                            {% if newsInfo.thumb == None %}
+                                <img style="width: 50px;height: 50px;" src="/static/img/upload.png">
+                            {% else %}
+                               <img  style="width: 50px;height: 50px;" src="/static/uploads/{{ newsInfo.thumb }}"/>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-2 control-label">状态</label>
+                        <div class="col-sm-10">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="radio" checked value="显示" name="status"> 开启
+                                </label>
+                                <label>
+                                    <input type="radio" value="隐藏" name="status"> 关闭
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 30px;">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-primary" id="sub">提交</button>
+                            <input type="reset" class="btn btn-default" name="reset" id="reset1">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="mymodal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">提示信息：</h4>
+                </div>
+                <div class="modal-body">
+                    <p id="mgs"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="jump" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+</body>
+</html>
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.js"></script>
+<script src="/static/js/jquery.form.js"></script>
+<script src="/static/js/jquery.validate-1.13.1.js"></script>
+<script>
+    init();
+    function init() {
+        //表单清空
+        $("#reset1").click(empty);
+        validate();
+    }
+    function validate() {
+        $("form").validate({
+            rules: {
+                positionName: {
+                    required: true,
+                }
+            },
+            messages: {
+                positionName: {
+                    required: "此处不能为空",
+                }
+            },
+            submitHandler: function (form) {
+                $("form").ajaxSubmit(function (message) {
+                    var data = JSON.parse(message);
+                    if (data["code"] == 0) {
+                        open(data["mgs"]);
+                         $("#jump").click(function () {
+                             location.href="/admin/poscontent?status="+data["data"]
+                         })
+                    }else{
+                        open(data["mgs"])
+                    }
+                })
+            }
+        })
+    }
+    //清空表单
+    function  empty() {
+        $("#form :input").val("")
+    }
+     //缩略图
+    function changeImg() {
+        var imgFile = this.files.item(0);  //拆分
+        console.log(imgFile);
+        var _url = window.URL.createObjectURL(imgFile);
+        $("#headImgPre").attr("src", _url);
+    }
+    //模态框
+    function open(mgs) {
+        $("#mgs").html(mgs);
+        $('#mymodal').modal("show");
+    }
+</script>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css" >
+    <style>
+        .table th{
+				text-align: center;
+			}
+    </style>
+</head>
+<body>
+    {% include 'admin_common/header.html' %}
+    <div class="row">
+        {% include 'admin_common/left.html' %}
+            <div class="col-sm-10 main" style="margin-top: 10px;">
+                <ol class="breadcrumb">
+                    <span class="glyphicon glyphicon-tags" style="padding-right: 5px;"></span>
+                    <li><a href="/admin/userlist">用户管理</a></li>
+                    <li class="active">添加用户</li>
+                </ol>
+                <div class="row">
+                    <div class="col-sm-2 btn-group open">
+                        <button type="button" class="btn btn-primary"><a href="/admin/addUser" style="color: white">+添加用户</a></button>
+                    </div>
+                    <div class="col-sm-4 col-sm-offset-2">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="关键字搜索" name="search" value="{{ keyword }}">
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary" type="button" id="search"><span class="glyphicon glyphicon-search"></span></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 10px">
+                    <div class="table-responsive" style="padding: 0 30px 0 18px">
+                        <table class="table table-bordered text-center">
+                            <thead>
+                              <tr>
+                                <th>#</th>
+                                <th>id</th>
+                                <th>用户名</th>
+                                <th>密码</th>
+                                <th>邮箱</th>
+                                <th>头像</th>
+                                <th>最后登录时间</th>
+                                <th>操作</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for item in userList %}
+                              <tr>
+                                <th scope="row"><input type="checkbox"></th>
+                                <td>{{ item.id }}</td>
+                                <td>{{ item.username }}</td>
+                                <td>{{ item.password }}</td>
+                                <td>{{ item.email }}</td>
+                                {% if item.headimg != None %}
+                                <td><img src="/static/uploads/{{ item.headimg }}" style="height: 50px;width:50px"></td>
+                                {% else %}
+                                <td><img src="/static/img/upload.png" style="height: 50px;width:50px"></td>
+                                {% endif %}
+                                <td>{{ item.lasttime|date:'Y-m-d h:m:s' }}</td>
+                                <td>
+                                    <a href="/admin/editUser?id={{ item.id }}" class="btn btn-primary" ><span class="glyphicon glyphicon-edit"></span></a>
+                                    <a class="btn btn-danger" id="_del"><span class="glyphicon glyphicon-trash"></span></a>
+                                </td>
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                 <div class="row">
+                    <nav aria-label="Page navigation" style="text-align: center">
+                        <ul class="pagination">
+                            {% if page != 1 %}
+                            <li>
+                                <a href="/admin/userlist?page={{ page |add:-1 }}&keyword={{ keyword }}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                            {% for item in allPageList %}
+                                <li
+                                    {% if page == item %}
+                                     class="active"
+                                    {% endif %}
+                                ><a href="/admin/userlist?page={{ item }}&keyword={{ keyword }}">{{ item }}</a></li>
+                            {% endfor %}
+                            {% if page != allPage %}
+                                <li>
+                                    <a href="/admin/userlist?page={{ page |add:1 }}&keyword={{ keyword }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+</body>
+</html>
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/jquery.form.js"></script>
+<script src="/static/js/jquery.validate-1.13.1.js" ></script>
+<script src="/static/js/bootstrap.js"></script>
+<script>
+    init();
+    function init() {
+        //关键字搜索
+        $("#search").click(search);
+    }
+     //搜索
+    function search(){
+            keyword= $("[name='search']").val();
+            console.log("关键字",keyword);
+            location.href="/admin/userlist?keyword="+keyword
+    }
+</script>

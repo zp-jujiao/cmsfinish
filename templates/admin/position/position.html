@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>推荐位管理</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css" >
+    <style>
+        .table th{
+				text-align: center;
+			}
+    </style>
+</head>
+<body>
+    {% include 'admin_common/header.html' %}
+    <div class="row">
+        {% include 'admin_common/left.html' %}
+        <div class="col-sm-10 main" style="margin-top: 10px;">
+            <ol class="breadcrumb">
+                <span class="glyphicon glyphicon-tags" style="padding-right: 5px;"></span>
+                <li><a href="/admin/positionList">推荐位管理</a></li>
+                <li class="active">推荐位列表</li>
+            </ol>
+	    	<div class="col-sm-3 btn-group open">
+		      	<button type="button" class="btn btn-primary"><a href="/admin/addPosition" style="color: white">+添加推荐位</a></button>
+		    </div>
+		    <div class="col-sm-6 input-group">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="搜索推荐位" name="search">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                    </span>
+                </div>
+		    </div>
+            <div class="col-sm-11">
+                <table class="table table-hover table-bordered" style="text-align: center;">
+				      <thead>
+					    <tr>
+					      <th>id</th>
+					      <th>推荐位名称</th>
+                               <th>描述</th>
+                               <th>创建时间</th>
+                               <th>状态</th>
+					      <th>操作</th>
+					    </tr>
+					  </thead>
+					  <tbody>     
+                            {% for item in positioninfo %}
+                            <tr  id="{{ item.id }}">
+                            <td>{{item.id }}</td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.description }}</td>
+                            <td>{{item.createTime|date:'Y-m-d h:m:s'  }}</td>
+                            <td id="status">显示</td>
+                        <td>
+                                <a href="/admin/editPosition?posId={{ item.id }}" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span></a>
+                                <button class="btn btn-danger" id="_del"><span class="glyphicon glyphicon-trash"></span></button>
+                            </td>
+                            </tr>
+                            {% endfor %}   
+					</tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="mymodal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">提示信息：</h4>
+                </div>
+                <div class="modal-body">
+                    <p id="mgs"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="cancel" class="btn btn-danger" data-dismiss="modal">取消</button>
+                    <button type="button" id="confirm" class="btn btn-primary">确定</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+</body>
+</html>
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.js"></script>
+<script>
+    init();
+    function init() {
+        //为状态赋值
+        var status=location.search.split("=")[1];
+        $("#status").html(status);
+        //点击删除
+        $("tbody #_del").click(delClick);
+    }
+    function delClick(){
+            var posid = $(this).parents('tr').children('td').eq(0).text();
+            $("#mgs").html("确认删除该条数据吗？");
+            $('#mymodal').modal('show');
+            $("#cancel").click(function () {
+                location.href="/manager/positionList"
+            });
+            $("#confirm").click(function () {
+                $.ajax({
+                    url:"/manager/delPosition/",
+                    type:"get",
+                    data:{
+                        posid:posid
+                    },
+                    dataType:"json",
+                    success:function (data) {
+                        $('#'+posid).remove();
+                    }
+                });
+                $('#mymodal').modal('hide');
+            })
+        }
+
+</script>

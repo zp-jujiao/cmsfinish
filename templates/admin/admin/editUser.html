@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css" >
+    <style>
+         {# 缩略图容器#}
+        #exampleInputFile{
+            width: 96px;
+            height: 93px;
+            position: absolute;
+            opacity:0;
+        }
+        {# 缩略图#}
+        #headImgPre{
+             width: 96px;
+             height: 93px;
+             border: 1px solid lightgray;
+        }
+    </style>
+</head>
+<body>
+    {% include 'admin_common/header.html' %}
+    <div class="row">
+        {% include 'admin_common/left.html' %}
+        <div class="col-sm-10 main" style="margin-top: 10px;">
+            <ol class="breadcrumb">
+                <span class="glyphicon glyphicon-tags" style="padding-right: 5px;"></span>
+                <li><a href="/admin/userlist">用户管理</a></li>
+                <li class="active">编辑用户</li>
+            </ol>
+            <form action="/admin/editUserHandler/" class="form-horizontal" style="padding-top: 20px" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">用户名</label>
+                    <div class="col-sm-6">
+                        <input type="hidden" name="id" value="{{ userList.id }}">
+                        <input type="text" class="form-control" id="inputUsername" placeholder="用户名" name="username" value="{{ userList.username }}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">密码</label>
+                    <div class="col-sm-6">
+                        <input type="password" class="form-control" id="inputPassword" placeholder="密码" name="password" value="{{ userList.password }}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">邮箱</label>
+                    <div class="col-sm-6">
+                        <input type="email" class="form-control" id="inputEmail" placeholder="邮箱" name="email" value="{{ userList.email }}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">用户头像</label>
+                    <div class="col-sm-6">
+                        <input type="file" id="exampleInputFile" name="headimg">
+                         {% if userList.headimg == None %}
+                            <img src="/static/img/upload.png"  class="preview" id="headImgPre"name="headImgPre"/>
+                        {% else %}
+                            <input type="hidden" value="{{ userList.headimg }}" name="preImg">
+                           <img src="/static/uploads/{{ userList.headimg }}"  class="preview" id="headImgPre" name="headImgPre"/>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">用户详情</label>
+                    <div class="col-sm-6">
+                        {{ form.media }}
+                        {{ form }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-8">
+                        <button type="submit" class="btn btn-primary">提交</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal" id="mymodal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">提示信息：</h4>
+                </div>
+                <div class="modal-body">
+                    <p id="mgs"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="jump" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+</body>
+</html>
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/jquery.form.js"></script>
+<script src="/static/js/jquery.validate-1.13.1.js" ></script>
+<script src="/static/js/bootstrap.js"></script>
+<script>
+    init();
+   var closeid;
+    function init() {
+        //给富文本编辑器赋值
+        $("[name='content']").html('{{ userList.userdetail|safe }}');
+        $("#exampleInputFile").change(changeFunc);
+        validator();
+    }
+    function validator() {
+        $("form").validate({
+            //表单验证
+            rules:{
+                username:{
+                    required:true,
+                    minlength:2,
+                    maxlength:6
+                },
+                password:{
+                    required:true,
+                    minlength:3,
+                    maxlength:8
+                },
+                email:{
+                    required:true,
+                },
+             },
+            messages:{
+                username:{
+                    required:"用户名必须填写",
+                    minlength:"用户名不得小于2",
+                    maxlength:"用户名不得大于6位"
+                },
+                password:{
+                    required:"密码必须填写",
+                    minlength:"密码不得小于3",
+                    maxlength:"密码不得大于8位"
+                },
+                email: {
+                    required:"邮箱必须填写",
+                }
+            },
+            //阻止表单提交
+            submitHandler:function(form) {
+                $("form").ajaxSubmit(function (message) {
+                    var data = JSON.parse(message);
+                    if (data["code"] == 0) {
+                        open(data["mgs"]);
+                         $("#jump").click(function () {
+                             location.href="/admin/userlist"
+                         })
+                    }else{
+                        open(data["mgs"])
+                    }
+                })
+            }
+        });
+    }
+    function changeFunc() {
+        console.log(123)
+        var imgFile=this.files.item(0);
+        var _url=window.URL.createObjectURL(imgFile);
+        console.log(_url)
+        $(".preview").attr("src",_url);
+
+    }
+
+ //模态框
+    function open(mgs) {
+        $("#mgs").html(mgs);
+        $('#mymodal').modal("show");
+    }
+</script>

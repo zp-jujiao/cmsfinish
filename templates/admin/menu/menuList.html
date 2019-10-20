@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>菜单管理</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css" >
+    <style>
+        .table th{
+				text-align: center;
+			}
+    </style>
+</head>
+<body>
+    {% include 'admin_common/header.html' %}
+    <div class="row">
+        {% include 'admin_common/left.html' %}
+        <div class="col-sm-10 main" style="margin-top: 10px;">
+            <ol class="breadcrumb">
+                <span class="glyphicon glyphicon-tags" style="padding-right: 5px;"></span>
+                <li><a href="/admin/menuList">菜单管理</a></li>
+                <li class="active">菜单列表</li>
+            </ol>
+	    	<div class="col-sm-3 btn-group open">
+		      	<button type="button" class="btn btn-primary"><a href="/admin/addMenu" style="color: white">+添加菜单</a></button>
+		    </div>
+		    <div class="col-sm-6 input-group">
+		        <span class="input-group-addon" id="basic-addon1">类型</span>
+                <select class="form-control" name="catid" id="catid">
+                    <option
+                           {% if catid == -1%}
+                               selected
+                           {% endif %}
+                            value="-1">全部菜单</option>
+                    {% for item in menuListOption %}
+                        <option
+                             {% if catid == item.id %}
+                                selected
+                             {% endif %}
+                                value="{{ item.id }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+		    </div>
+            <div class="col-sm-11">
+                <table class="table table-hover table-bordered" style="text-align: center;">
+				      <thead>
+					    <tr>
+					      <th>id</th>
+					      <th>菜单名</th>
+					      <th>模块名</th>
+					      <th>类型</th>
+                               <th>状态</th>
+					      <th>操作</th>
+					    </tr>
+					  </thead>
+					  <tbody>     
+                            {% for item in listinfo %}
+                            <tr  id="{{ item.id }}">
+                            <td>{{item.id }}</td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.classify }}</td>
+                            <td>{{ item.menuType }}</td>
+                            <td>{{ item.status }}</td>
+                        <td>
+                                <a href="/admin/editMenu?id={{ item.id }}&menuType={{ item.menuType }}&status={{ item.status }}" class="btn btn-primary" id="redact"><span class="glyphicon glyphicon-edit"></span></a>
+                                <a class="btn btn-danger" id="_del"><span class="glyphicon glyphicon-trash"></span></a>
+                            </td>
+                            </tr>
+                            {% empty %}
+                                <td colspan="7">当前没有数据</td>
+                            {% endfor %}   
+					</tbody>
+                </table>
+                <nav aria-label="Page navigation" style="text-align: center">
+                    <ul class="pagination">
+                        {% if page != 1 %}
+                        <li>
+                            <a href="/admin/menuList?page={{ page |add:-1 }}&catid={{ item.id }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% for item in allPageList %}
+                            <li
+                                {% if page == item %}
+                                 class="active"
+                                {% endif %}
+                            ><a href="/admin/menuList?page={{ item }}&catid={{ item.id }}">{{ item }}</a></li>
+                        {% endfor %}
+                        {% if page != allPage %}
+                            <li>
+                                <a href="/admin/menuList?page={{ page |add:1 }}&catid={{ item.id }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="mymodal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">提示信息：</h4>
+                </div>
+                <div class="modal-body">
+                    <p id="mgs"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="cancel" class="btn btn-danger" data-dismiss="modal">取消</button>
+                    <button type="button" id="confirm" class="btn btn-primary">确定</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+</body>
+</html>
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.js"></script>
+<script>
+    init();
+    function init() {
+        $("tbody #_del").click(delmenu);
+        $("#catid").change(optionVal);
+    }
+    //点击下拉菜单弹出所选内容
+        function optionVal(){
+            catid = $("option:selected",this).val();
+           location.href="/admin/menuList?id="+catid
+        }
+     //点击删除
+        function delmenu(){
+             var menusid = $(this).parents('tr').children('td').eq(0).text();
+            $("#mgs").html("确认删除该条数据吗？");
+            $('#mymodal').modal('show');
+            $("#cancel").click(function () {
+                location.href="/admin/menuList"
+            });
+            $("#confirm").click(function () {
+                $.ajax({
+                    url:"/admin/delMenuHandler/",
+                    type:"get",
+                    data:{
+                        menusid:menusid
+                    },
+                    dataType:"json",
+                    success:function (data) {
+                        $('#'+menusid).remove();
+                    }
+                });
+                $('#mymodal').modal('hide');
+            })
+        }
+</script>

@@ -141,17 +141,17 @@
             },
 			url:"http://127.0.0.1:8000/index/homeajax/",
 			success:function(data){
-				console.log(data,"111111111")
-                var content=data["cont"]
-                var news=data["news"]
-                console.log(content,news)
-                console.log(content.length)
+				console.log(data,"111111111");
+                var content=data["cont"];
+                var news=data["news"];
+                console.log(content,news);
+                console.log(content.length);
                 var newslist=''
-                newslist=$(".newslist").html()
+                newslist=$(".newslist").html();
                 for (var i=0;i<content.length;i++){
-                    console.log(content[i],news[i])
-                    var smallcont=content[i]['content']
-                    console.log(smallcont.split('。')[0])
+                    console.log(content[i],news[i]);
+                    var smallcont=content[i]['content'];
+                    console.log(smallcont.split('。')[0]);
                     var newtime=formatTime(news[i]['registtime'], 'Y年M月D日 h:m:s')
                     var div="<div class='row' style='border-bottom: 2px solid lightgray'><div class='col-sm-3 text-center' style='padding:5px 0;'>"
                     if(news[i]['thumb']){

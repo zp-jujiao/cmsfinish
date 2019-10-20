@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加菜单</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css" >
+</head>
+<body>
+    {% include 'admin_common/header.html' %}
+    <div class="row">
+        {% include 'admin_common/left.html' %}
+        <div class="col-sm-10 main" style="margin-top: 10px;">
+            <ol class="breadcrumb">
+                <span class="glyphicon glyphicon-tags" style="padding-right: 5px;"></span>
+                <li><a href="/admin/menuList">菜单管理</a></li>
+                <li class="active">添加菜单</li>
+            </ol>
+            <div class="col-sm-7 col-sm-offset-1" style="margin-top: 20px;">
+                <form action="/admin/addMenuHandler/" method="post" class="form-horizontal" >
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">菜单名</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="menuname" id="menuname" placeholder="请输入菜单名">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-2 control-label">模块名</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="classify" id="classify" placeholder="请输入模块名">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-2 control-label">菜单类型</label>
+                        <div class="col-sm-10">
+                            <div class="checkbox one">
+                                <label>
+                                  <input type="radio" value="后台栏目" name="menuType"> 后台栏目
+                                </label>
+                                <label>
+                                  <input type="radio" checked value="前台栏目" name="menuType" > 前台栏目
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-2 control-label">状态</label>
+                        <div class="col-sm-10">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="radio" checked value="显示" name="status"> 开启
+                                </label>
+                                <label>
+                                    <input type="radio" value="隐藏" name="status"> 关闭
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 30px;">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-primary" id="sub">提交</button>
+                            <input type="reset" class="btn btn-default" name="reset" id="reset1">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="mymodal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">提示信息：</h4>
+                </div>
+                <div class="modal-body">
+                    <p id="mgs"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="jump" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+</body>
+</html>
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.js"></script>
+<script src="/static/js/jquery.form.js"></script>
+<script src="/static/js/jquery.validate-1.13.1.js"></script>
+<script>
+    init();
+    function init() {
+        $("#reset1").click(empty);
+        validate();
+    }
+    function validate() {
+        $("form").validate({
+            rules: {
+                menuname: {
+                    required: true,
+                },
+                modelname: {
+                    required: true,
+                }
+            },
+            messages: {
+                menuname: {
+                    required: "此处不能为空",
+                },
+                modelname: {
+                    required: "此处不能为空"
+                }
+            },
+            submitHandler: function (form) {
+                $("form").ajaxSubmit(function (message) {
+                    var data = JSON.parse(message);
+                    if (data["code"] == 0) {
+                        open(data["mgs"]);
+                         $("#jump").click(function () {
+                             location.href="/admin/menuList"
+                         })
+                    }else{
+                        open(data["mgs"])
+                    }
+                })
+            }
+        })
+    }
+    //清空表单
+    function  empty() {
+        $("#form :input").val("")
+    }
+    //模态框
+    function open(mgs) {
+        $("#mgs").html(mgs);
+        $('#mymodal').modal("show");
+    }
+</script>

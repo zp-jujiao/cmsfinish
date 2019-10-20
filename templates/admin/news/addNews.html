@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加文章</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css" >
+    <style>
+        {# 缩略图容器#}
+        #newsImg{
+            width: 96px;
+            height: 93px;
+            position: absolute;
+            opacity:0;
+        }
+        {# 缩略图#}
+        #headImgPre{
+         width: 96px;
+         height: 93px;
+         border: 1px solid lightgray;
+        }
+    </style>
+</head>
+<body>
+      {% include 'admin_common/header.html' %}
+    <div class="row">
+        {% include 'admin_common/left.html' %}
+        <div class="col-sm-10 main" style="margin-top: 10px;">
+            <ol class="breadcrumb">
+                <span class="glyphicon glyphicon-tags" style="padding-right: 5px;"></span>
+                <li><a href="/admiin/newsList">文章管理</a></li>
+                <li class="active">添加文章</li>
+            </ol>
+            <div class="col-sm-9 col-sm-offset-1">
+                <form action="/admin/addNewsHandler/" method="post" class="form-horizontal" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="input1" class="col-sm-2 control-label">标题</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="input1" name="title" placeholder="请输入标题">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">缩略图</label>
+                        <div class="col-sm-10">
+                            <input type="file" name="newsImg" id="newsImg">
+                            <img src="/static/img/upload.png" id="headImgPre">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">标题颜色</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="titlecolor">
+                                <option disabled selected>选择颜色</option>
+                                {% for item in colorList %}
+                                <option value="{{ item.color }}">{{ item.colortxt }}</option>
+                                {% empty %}
+                                  <option disabled>没有颜色值</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-2 control-label">所属栏目</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="catid">
+                                <option disabled selected>选择所属栏目</option>
+                                {% for item in listinfo %}
+                                    <option value="{{ item.id }}">{{ item.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-2 control-label">内容</label>
+                        <div class="col-sm-10">
+                            {{ form.media }}
+                            {{ form }}
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 30px;">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-primary" id="sub">提交</button>
+                            <input type="reset" class="btn btn-default" name="reset" id="reset1">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="mymodal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title" id="mgs">提示信息：</h4>
+                </div>
+                <div class="modal-body">
+                    <p id="mgs1"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="jump" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+</body>
+</html>
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.js"></script>
+<script src="/static/js/jquery.form.js"></script>
+<script src="/static/js/jquery.validate-1.13.1.js"></script>
+<script>
+     init();
+    function init() {
+        $("#reset1").click(empty);
+        $("#newsImg").change(changeImg);
+        //点击弹出模态框
+        $("#openModel").click(open);
+        {#_url.name.split(".")[-1]#}
+        imgAttr=$("#headImgPre").attr("src");
+        console.log("====="+imgAttr);
+        validate();
+    }
+    function validate() {
+        $("form").validate({
+            rules: {
+                title: {
+                    required: true,
+                },
+                titlecolor: {
+                    required: true,
+                },
+                catid: {
+                    required: true,
+                }
+            },
+            messages: {
+                title: {
+                    required: "此处不能为空",
+                },
+                titlecolor: {
+                    required: "请选择标题颜色",
+                },
+                 catid: {
+                     required: "请选择所属栏目"
+                 }
+            },
+            submitHandler: function (form) {
+                 var imgAttr=$("#id_content p img").attr("src");
+                alert("我是图片===",imgAttr);
+
+
+                var imgName=$("#newsImg").val();
+                if (imgName){
+                    //当前文件存在上传文件
+                     arr=["jpg", "jpeg", "png","gif"];
+                    imgType=imgName.split(".")[imgName.split(".").length-1];
+                    if(arr.indexOf(imgType)==-1){
+                        open("当前上传文件不属于图片");
+                        return false;
+                    }
+                }
+                $("form").ajaxSubmit(function (message) {
+                    var data = JSON.parse(message);
+                    if (data["code"] == 0) {
+                        open(data["mgs"]);
+                         $("#jump").click(function () {
+                             location.href="/admin/newsList"
+                         })
+                    }else{
+                        open(data["mgs"]);
+                    }
+                })
+            }
+        })
+    }
+    //清空表单
+    function  empty() {
+        $("#form :input").val("")
+    }
+    //缩略图
+    function changeImg() {
+        var imgFile = this.files.item(0);
+        imgName=imgFile.name;
+        arr=["jpg", "jpeg", "png","gif"];
+        imgType=imgName.split(".")[imgName.split(".").length-1];
+        if(arr.indexOf(imgType)==-1){
+            open("当前上传文件不属于图片");
+             $("#headImgPre").attr("src","/static/img/upload.png" )
+            return;
+        }
+        var _url = window.URL.createObjectURL(imgFile);
+        $("#headImgPre").attr("src", _url);
+    }
+    //模态框
+    function open(mgs) {
+        $("#mgs1").html(mgs);
+        $('#mymodal').modal("show");
+    }
+
+</script>
